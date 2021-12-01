@@ -18,9 +18,14 @@ const FileSchema = new Mongoose.Schema({
         type: Date,
         required: false
     },
-    fileData: {
-        type: mongoose.Schema.Types.Subdocument,
+    fileName: {
+        type: String,
         required: true
+    },
+    views: {
+        type: Number,
+        required: false,
+        default: 0
     }
 })
 

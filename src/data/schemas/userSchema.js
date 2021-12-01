@@ -26,10 +26,6 @@ const UserSchema = new Mongoose.Schema({
         required: false,
         default: Date.now()
     },
-    birthDate: {
-        type: Date,
-        required: true
-    },
     tos: {
         type: Boolean,
         required: false,
