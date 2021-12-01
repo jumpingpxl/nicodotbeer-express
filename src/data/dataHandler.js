@@ -34,19 +34,20 @@ class DataHandler {
       fileId: fileId,
       uploaderId: "test",
       fileName: fileId + fileExtention,
+      mimeType: fileData.mimetype,
     });
 
-    const result = await file.save()
+    const result = await file.save();
     if (!result) {
-      return (
-        "An error occured while getting saving your file to the database. Reason: " +
-        err
-      );
+      return "An error occured while getting saving your file to the database.";
     }
 
-    await writeFile(path.join(await getUploadFolder(file.uploaderId), file.fileName), fileData.data);
-    
-    res.end('http://localhost:3000/' + file.fileName);
+    await writeFile(
+      path.join(await getUploadFolder(file.uploaderId), file.fileName),
+      fileData.data
+    );
+
+    res.end("http://localhost:3000/" + file.fileName);
     return undefined;
   }
 
@@ -86,11 +87,7 @@ function generateRandomName(attempt) {
             reject("An error occured while connecting to our database");
           } else if (file) {
             console.log(
-              "Couldn't claim Name " +
-                randomName +
-                ". Trying again (attempt " +
-                attempt +
-                ")"
+              `Couldn't claim Name ${randomName}. Trying again (attempt ${attempt})`
             );
             resolve(generateRandomName(attempt + 1));
           } else {
@@ -112,4 +109,4 @@ function getRandomString(length) {
   return randomName;
 }
 
-const dataHandler = module.exports = exports = new DataHandler();
+const dataHandler = (module.exports = exports = new DataHandler());

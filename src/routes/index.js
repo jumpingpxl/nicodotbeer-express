@@ -1,9 +1,9 @@
-const express = require('express')
+const express = require("express");
 
-const Router = express.Router()
+const Router = express.Router();
 
-Router.get('/', function (req, res) {
-    
-})
+Router.get("/:filename", function (req, res) {
+  const fileName = req.params.filename;
+});
 
 module.exports = Router;
