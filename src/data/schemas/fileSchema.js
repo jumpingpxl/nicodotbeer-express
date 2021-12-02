@@ -1,6 +1,6 @@
-const Mongoose = require("mongoose");
+const mongoose = require("mongoose");
 
-const FileSchema = new Mongoose.Schema({
+const FileSchema = new mongoose.Schema({
   fileId: {
     type: String,
     required: true,
@@ -33,4 +33,4 @@ const FileSchema = new Mongoose.Schema({
   },
 });
 
-module.exports = Mongoose.model("File", FileSchema, "files");
+module.exports = mongoose.model("File", FileSchema, "files");

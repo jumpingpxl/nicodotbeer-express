@@ -1,8 +1,7 @@
-const Mongoose = require("mongoose");
-
+const mongoose = require("mongoose");
 const uuid = require("uuid");
 
-const UserSchema = new Mongoose.Schema({
+const UserSchema = new mongoose.Schema({
   userId: {
     type: String,
     required: false,
@@ -38,4 +37,4 @@ const UserSchema = new Mongoose.Schema({
   },
 });
 
-module.exports = Mongoose.model("User", UserSchema, "users");
+module.exports = mongoose.model("User", UserSchema, "users");

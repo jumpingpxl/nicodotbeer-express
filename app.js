@@ -1,20 +1,20 @@
 const express = require("express");
 const fileUpload = require("express-fileupload");
 const logger = require("morgan");
+const mongoose = require("mongoose");
+const math = require("path");
+const bodyParser = require("body-parser");
 
-const Mongoose = require("mongoose");
-const Path = require("path");
-const BodyParser = require("body-parser");
 const App = express();
 
 const port = 3000;
 
-Mongoose.connect(process.env.MONGO_CONNECTIONSTRING, {
+mongoose.connect(process.env.MONGO_CONNECTIONSTRING, {
   dbName: process.env.MONGO_DATABASE,
 });
 
-App.use(BodyParser.json());
-App.use(BodyParser.urlencoded({ extended: true }));
+App.use(bodyParser.json());
+App.use(bodyParser.urlencoded({ extended: true }));
 App.use(
   fileUpload({
     safeFileNames: true,
@@ -23,11 +23,11 @@ App.use(
   })
 );
 
-App.set("views", Path.join(__dirname, "./src/views"));
+App.set("views", path.join(__dirname, "./src/views"));
 App.set("view engine", "ejs");
 
 App.use(logger("dev"));
-App.use(express.static(Path.join(__dirname, "./public")));
+App.use(express.static(path.join(__dirname, "./public")));
 
 App.use("/", require("./src/routes/routes"));
 
