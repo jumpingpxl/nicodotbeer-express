@@ -2,7 +2,7 @@ const express = require("express");
 const fileUpload = require("express-fileupload");
 const logger = require("morgan");
 const mongoose = require("mongoose");
-const math = require("path");
+const path = require("path");
 const bodyParser = require("body-parser");
 
 const App = express();
