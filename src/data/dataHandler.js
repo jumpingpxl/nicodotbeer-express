@@ -47,26 +47,81 @@ class DataHandler {
       fileData.data
     );
 
-    res.end("http://localhost:3000/" + file.fileName);
-    return undefined;
+    return [undefined, file];
   }
 
-  getFile(req, res) {}
+  getFile(fileName) {
+    return getFileAndData(fileName, " uploadDate views");
+  }
 
-  getFileAndData(req, res, keys) {}
+  getRawFile(fileName) {
+    return getFileAndData(fileName, "");
+  }
 }
 
-async function getUploadFolder(uploaderId) {
-  if (!(await existsFile(uploadFolder))) {
-    await mkDir(uploadFolder);
-  }
+function getFileAndData(fileName, keys) {
+  const fileId = fileName.split(".")[0];
+  return new Promise((resolve, reject) => {
+    FileSchema.findOne(
+      { fileId: fileId },
+      "fileId uploaderId fileName mimeType" + keys,
+      function (err, fileData) {
+        if (err) {
+          reject("" + err);
+        } else if (!fileData) {
+          reject("File " + fileName + " not found.");
+        } else {
+          getUploadFolder(fileData.uploaderId).then((uploaderFolder) => {
+            const filePath = path.join(uploaderFolder, fileData.fileName);
+            fs.exists(filePath, (exists) => {
+              if (exists) {
+                fs.readFile(filePath, (err, buffer) => {
+                  if (err) {
+                    reject("" + err);
+                  } else {
+                    resolve([buffer, fileData]);
+                  }
+                });
+              } else {
+                reject(
+                  "File " +
+                    fileName +
+                    " not found. This is most likely due to an error."
+                );
+              }
+            });
+          });
+        }
+      }
+    );
+  });
+}
 
-  const uploaderFolder = path.join(uploadFolder, uploaderId);
-  if (!(await existsFile(uploaderFolder))) {
-    await mkDir(uploaderFolder);
-  }
-
-  return uploaderFolder;
+async function getUploadFolder(uploaderId, mainFolderExists) {
+  return new Promise((resolve) => {
+    if (!mainFolderExists) {
+      fs.exists(uploadFolder, (exists) => {
+        if (!exists) {
+          fs.mkdir(uploadFolder, (_finished) => {
+            resolve(getUploadFolder(uploaderId, true));
+          });
+        } else {
+          resolve(getUploadFolder(uploaderId, true));
+        }
+      });
+    } else {
+      const uploaderFolder = path.join(uploadFolder, uploaderId);
+      fs.exists(uploaderFolder, (exists) => {
+        if (!exists) {
+          fs.mkdir(uploaderFolder, (_finished) => {
+            resolve(uploaderFolder);
+          });
+        } else {
+          resolve(uploaderFolder);
+        }
+      });
+    }
+  });
 }
 
 function generateRandomName(attempt) {
