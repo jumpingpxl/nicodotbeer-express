@@ -26,6 +26,11 @@ const FileSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  visible: {
+    type: Boolean,
+    required: false,
+    default: true
+  },
   views: {
     type: Number,
     required: false,

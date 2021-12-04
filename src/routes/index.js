@@ -8,12 +8,35 @@ Router.get("/:filename", function (req, res) {
   if(req._parsedUrl.pathname.substring(1).includes("/")) {
     res.end();
   } else {
-    dataHandler.getFile(fileName);
+    dataHandler.getFile(fileName).then(([file, user]) => {
+      console.log(user);
+      res.render('../views/layout', {
+        req: req,
+        title: "Home",
+        body: "file",
+        file: file,
+        user: user
+      });
+    }).catch(err => {
+      res.render('../views/layout', {
+        req: req,
+        title: "Home",
+        body: "file",
+        file: {
+          fileName: null
+        },
+        errors: ["" + err]
+      });
+    });;
   }
 });
 
 Router.get("/", function (req, res) {
-  res.send("hello world");
+  res.render('../views/layout', {
+    req: req,
+    title: "Home",
+    body: "index"
+  });
 });
 
 module.exports = Router;
