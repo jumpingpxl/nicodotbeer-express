@@ -1,0 +1,12 @@
+<% if(typeof errors !=='undefined' ) { %> <% errors.forEach(function(error){ %>
+    <% console.log('for: ' + error + ' ;' + error.msg); %>
+    <p class="flash-error"><%= error %></p>
+    <% }) %> <% } %> <% if(typeof success_msg !=='undefined' && success_msg !=='' )
+    { %>
+    <p class="flash-error"><%= success_msg %></p>
+    <% } %> <% if(typeof error_msg !=='undefined' && error_msg !=='' ) { %>
+    <p class="flash-error"><%= error_msg %></p>
+    <% } %> <% if(typeof error !=='undefined' && error !=='' ) { %>
+    <p class="flash-error"><%= error %></p>
+    <% } %>
+    

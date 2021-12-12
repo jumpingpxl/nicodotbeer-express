@@ -1,0 +1,14 @@
+<% if(typeof localStorageArray !== "undefined") { %>
+<script id="addItemsToLocalStorage">
+    const localStorageArray = <%- JSON.stringify(localStorageArray) %>
+  for(const [key, value] of localStorageArray) {
+    if(value === undefined) {
+        localStorage.removeItem(key);
+    } else {
+        localStorage.setItem(key, value);
+    }
+  }
+
+  document.getElementById("addItemsToLocalStorage").remove();
+</script>
+<% } %>
