@@ -7,8 +7,6 @@ const bodyParser = require("body-parser");
 
 const App = express();
 
-const port = 3000;
-
 mongoose.connect(process.env.MONGO_CONNECTIONSTRING, {
   dbName: process.env.MONGO_DATABASE,
 });
@@ -31,6 +29,6 @@ App.use(express.static(path.join(__dirname, "./public")));
 
 App.use("/", require("./src/routes/routes"));
 
-App.listen(port, () => {
-  console.log(`Listening on port ${port}!`);
+App.listen(process.env.PORT, () => {
+  console.log(`Listening on port ${process.env.PORT}!`);
 });
