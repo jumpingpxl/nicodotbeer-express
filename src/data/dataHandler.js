@@ -16,44 +16,67 @@ const uploadFolder = path.join(__dirname + "/../..", "uploads");
 class DataHandler {
   constructor(options) {}
 
+  getDomainFromRequest(req) {
+    return (req.secure ? "https" : "http") + "://" + req.headers.host;
+  }
+
   uploadFile(req, res) {
     const fileData = req.files.file;
     const userKey = req.body.userKey;
     return new Promise((resolve, reject) => {
-      getUserData({userKey: userKey}, "userId roleId autoVisibility").then(user => {
-        generateRandomName(0).then(randomName => {
-          const fileExtention = path.extname(fileData.name);
-          const file = new FileSchema({
-            fileId: randomName,
-            uploaderId: user.userId,
-            fileName: randomName + fileExtention,
-            mimeType: fileData.mimetype,
-            visible: user.autoVisibility
-          });
+      getUserData({ userKey: userKey }, "userId roleId autoVisibility")
+        .then((user) => {
+          generateRandomName(0)
+            .then((randomName) => {
+              const fileExtention = path.extname(fileData.name);
+              const file = new FileSchema({
+                fileId: randomName,
+                uploaderId: user.userId,
+                fileName: randomName + fileExtention,
+                mimeType: fileData.mimetype,
+                visible: user.autoVisibility,
+              });
 
-          file.save().then(saved => {
-            if(!saved) {
-              reject("An error occured while saving your file to the database")
-            } else {
-              getUploadFolder(file.uploaderId).then(folderPath => {
-                fs.writeFile(path.join(folderPath, file.fileName), fileData.data, (_finished) => {
-                  resolve(file);
+              file
+                .save()
+                .then((saved) => {
+                  if (!saved) {
+                    reject(
+                      "An error occured while saving your file to the database"
+                    );
+                  } else {
+                    getUploadFolder(file.uploaderId)
+                      .then((folderPath) => {
+                        fs.writeFile(
+                          path.join(folderPath, file.fileName),
+                          fileData.data,
+                          (_finished) => {
+                            resolve(file);
+                          }
+                        );
+                      })
+                      .catch((err) => reject(err));
+                  }
                 })
-              }).catch(err => reject(err));
-            }
-          }).catch(err => reject(err));
-        }).catch(err => reject(err));
-      }).catch(err => reject(err));
+                .catch((err) => reject(err));
+            })
+            .catch((err) => reject(err));
+        })
+        .catch((err) => reject(err));
     });
   }
 
   getFile(fileName) {
     return new Promise((resolve, reject) => {
-      getFileAndData(fileName, "uploadDate views", true).then(file => {
-        getUserDataById(file.uploaderId, "userId discordId roleId").then(user => {
-          resolve([file, user]);
-        }).catch(err => resolve(file))
-      }).catch(err => reject(err))
+      getFileAndData(fileName, "uploadDate views", true)
+        .then((file) => {
+          getUserDataById(file.uploaderId, "userId discordId roleId")
+            .then((user) => {
+              resolve([file, user]);
+            })
+            .catch((err) => resolve(file));
+        })
+        .catch((err) => reject(err));
     });
   }
 
@@ -64,26 +87,30 @@ class DataHandler {
 
 function getUserDataById(userId, keys) {
   return new Promise((resolve, reject) => {
-    getUserData({userId: userId}, keys).then(user => {
-      resolve(user)
-    }).catch(err => reject(err));
+    getUserData({ userId: userId }, keys)
+      .then((user) => {
+        resolve(user);
+      })
+      .catch((err) => reject(err));
   });
 }
 
 function getUserDataByDiscord(discordId, keys) {
   return new Promise((resolve, reject) => {
-    getUserData({discordId: discordId}, keys).then(user => {
-      resolve(user)
-    }).catch(err => reject(err));
+    getUserData({ discordId: discordId }, keys)
+      .then((user) => {
+        resolve(user);
+      })
+      .catch((err) => reject(err));
   });
 }
 
 function getUserData(filter, keys) {
   return new Promise((resolve, reject) => {
-    UserSchema.findOne(filter, keys, function(err, user) {
-      if(err) {
-        reject(""+ err);
-      } else if(!user) {
+    UserSchema.findOne(filter, keys, function (err, user) {
+      if (err) {
+        reject("" + err);
+      } else if (!user) {
         reject("User not found!");
       } else {
         resolve(user);
@@ -103,7 +130,7 @@ function getFileAndData(fileName, keys, justData) {
           reject("" + err);
         } else if (!fileData) {
           reject("File " + fileName + " not found.");
-        } else if(justData){
+        } else if (justData) {
           resolve(fileData);
         } else {
           getUploadFolder(fileData.uploaderId).then((uploaderFolder) => {

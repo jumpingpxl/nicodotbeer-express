@@ -18,9 +18,9 @@ html {
   -webkit-box-align: center;
   align-items: center;
   max-width: 1000px;
-  padding: 20px 0;
+  padding: 20px;
   margin: auto;
-  background: black;
+  background: rgb(17, 18, 22);
 }
 
 .flash-error {

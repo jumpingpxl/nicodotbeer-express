@@ -1,10 +1,10 @@
 const fetch = require("node-fetch");
-const config = require("../config.json");
 
 const API = "https://discord.com/api/v8";
-const Token = require("./authclient/token.js");
-const User = require("./authclient/user.js");
-const Guild = require("./authclient/guild.js");
+
+const Token = require("./authClient/token.js");
+const User = require("./authClient/user.js");
+const Guild = require("./authClient/guild.js");
 
 class Client {
   /**
@@ -22,11 +22,11 @@ class Client {
     this.redirectURI = options.redirectURI;
   }  
 
-  getInvite() {
+  getInvite(domain) {
     return `https://discord.com/oauth2/authorize?client_id=${
       this._clientID
     }&response_type=code&redirect_uri=${
-      this.redirectURI
+      domain + this.redirectURI
     }&scope=${this.scopes.join(" ")}`;
   }
 
@@ -35,7 +35,7 @@ class Client {
    * @param {String} code
    * @returns {Promise<Token>}
    */
-  getAccessToken(code) {
+  getAccessToken(code, domain) {
     return new Promise((resolve, reject) => {
       fetch(`${API}/oauth2/token`, {
         method: "POST",
@@ -47,7 +47,7 @@ class Client {
           client_secret: this._clientSecret,
           grant_type: "authorization_code",
           code: code,
-          redirect_uri: this.redirectURI,
+          redirect_uri: domain + this.redirectURI,
           scope: this.scopes.join(" "),
         }),
       })
@@ -191,9 +191,18 @@ class Client {
   }
 }
 
-module.exports = new Client({
+const client = new Client({
+  clientID: process.env.DISCORD_ID,
+  clientSecret: process.env.DISCORD_SECRET,
+  scopes: ["identify", "guilds"],
+  redirectURI: "/login/success"
+})
+
+module.exports = client;
+
+/*module.exports = new Client({
   clientSecret: config.discord.clientSecret,
   clientID: config.discord.clientId,
   scopes: config.discord.scopes,
   redirectURI: config.discord.redirectUri,
-});
+}); */

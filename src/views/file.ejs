@@ -1,5 +1,7 @@
+<link rel="stylesheet" href="/stylesheets/file.css" />
+<script src="/scripts/preview.js"></script>
+
 <% console.log(file) %> 
 <% if(file !== "undefined") { %>
-<img src="/raw/<%= file.fileName %>">
+<img class="previewable" src="/raw/<%= file.fileName %>">
 <% } %> 
-<p>hi</p>

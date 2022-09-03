@@ -16,6 +16,7 @@
     "express-fileupload": "^1.2.1",
     "mongoose": "^6.0.13",
     "morgan": "^1.10.0",
+    "node-fetch": "^2.6.6",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
